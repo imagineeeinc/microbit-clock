@@ -1,3 +1,8 @@
+/**
+ * mode0-setting mode
+ * 
+ * mode1-display
+ */
 input.onButtonPressed(Button.A, function () {
     if (mode == 0) {
         if (settingplace == 0) {
@@ -18,6 +23,31 @@ input.onGesture(Gesture.LogoUp, function () {
         show(true)
     }
 })
+function timer () {
+    basic.pause(60000)
+    if (m2 + 1 == 10) {
+        if (m1 + 1 == 6) {
+            m1 = 0
+            m2 = 0
+            if (h2 + 1 == 4 && h1 == 2) {
+                h1 = 0
+                h2 = 0
+                m1 = 0
+                m2 = 0
+            } else if (h2 + 1 == 10) {
+                h1 = h1 + 1
+                h2 = 0
+            } else {
+                h2 = h2 + 1
+            }
+        } else {
+            m1 = m1 + 1
+            m2 = 0
+        }
+    } else {
+        m2 = m2 + 1
+    }
+}
 input.onButtonPressed(Button.B, function () {
     if (mode == 0) {
         if (settingplace < 3) {
@@ -30,18 +60,7 @@ input.onButtonPressed(Button.B, function () {
         show(true)
     }
 })
-/**
- * mode0-setting mode
- * 
- * mode1-display
- */
 function setup () {
-    list = [
-    2,
-    9,
-    6,
-    0
-    ]
     h1 = 0
     h2 = 0
     m1 = 0
@@ -53,7 +72,6 @@ function show (force: boolean) {
     basic.showString("" + convertToText(h1) + convertToText(h2) + ":" + convertToText(m1) + convertToText(m2))
     basic.clearScreen()
 }
-let list: number[] = []
 let m2 = 0
 let m1 = 0
 let h2 = 0
@@ -73,7 +91,7 @@ basic.forever(function () {
             basic.showNumber(m2)
         }
     } else if (mode == 1) {
-    	
+        timer()
     }
     if (2 < h1) {
         h1 = 0
@@ -89,28 +107,5 @@ basic.forever(function () {
     }
     if (9 < m2) {
         m2 = 0
-    }
-})
-basic.forever(function () {
-    basic.pause(60000)
-    if (mode == 1) {
-        if (m2 + 1 == 10) {
-            if (m1 + 1 == 6) {
-                if (h2 + 1 == 10) {
-                    h1 = h1 + 1
-                    h2 = 0
-                    m1 = 0
-                    m2 = 0
-                } else {
-                    h2 = h2 + 1
-                    m1 = 0
-                    m2 = 0
-                }
-            } else {
-                m1 = m1 + 1
-                m2 = 0
-            }
-        }
-        m2 = m2 + 1
     }
 })
