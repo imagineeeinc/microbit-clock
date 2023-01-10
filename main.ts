@@ -57,7 +57,7 @@ input.onButtonPressed(Button.B, function () {
             show(true)
         }
     } else if (mode == 1) {
-        show(true)
+        basic.showString("" + convertToText(input.temperature()) + "c")
     }
 })
 function setup () {
