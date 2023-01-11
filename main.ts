@@ -58,6 +58,20 @@ input.onButtonPressed(Button.B, function () {
         }
     } else if (mode == 1) {
         basic.showString("" + convertToText(input.temperature()) + "c")
+        degrees = input.compassHeading()
+        if (degrees < 45) {
+            basic.showArrow(ArrowNames.North)
+        } else if (degrees < 135) {
+            basic.showArrow(ArrowNames.East)
+        } else if (degrees < 225) {
+            basic.showArrow(ArrowNames.South)
+        } else if (degrees < 315) {
+            basic.showArrow(ArrowNames.West)
+        } else {
+            basic.showArrow(ArrowNames.North)
+        }
+        basic.pause(3000)
+        basic.clearScreen()
     }
 })
 function setup () {
@@ -72,6 +86,7 @@ function show (force: boolean) {
     basic.showString("" + convertToText(h1) + convertToText(h2) + ":" + convertToText(m1) + convertToText(m2))
     basic.clearScreen()
 }
+let degrees = 0
 let m2 = 0
 let m1 = 0
 let h2 = 0
