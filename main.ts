@@ -1,126 +1,103 @@
-/**
- * mode0-setting mode
- * 
- * mode1-display
- */
+buttonClicks.onButtonDoubleClicked(buttonClicks.AorB.A, function () {
+    if (mode == 1) {
+        if (serial_out == 0) {
+            serial_out = 1
+        } else {
+            serial_out = 0
+        }
+    }
+})
 input.onButtonPressed(Button.A, function () {
     if (mode == 0) {
         if (settingplace == 0) {
-            h1 = h1 + 1
+            h += 1
         } else if (settingplace == 1) {
-            h2 = h2 + 1
+            m += 1
         } else if (settingplace == 2) {
-            m1 = m1 + 1
-        } else if (settingplace == 3) {
-            m2 = m2 + 1
+            ampm = 0
         }
     } else if (mode == 1) {
-        show(true)
+        basic.showString(timeanddate.time(timeanddate.TimeFormat.HMMAMPM))
     }
 })
 input.onGesture(Gesture.LogoUp, function () {
     if (mode == 1) {
-        show(true)
+        basic.showString(timeanddate.time(timeanddate.TimeFormat.HMMAMPM))
     }
 })
-function timer () {
-    basic.pause(60000)
-    if (m2 + 1 == 10) {
-        if (m1 + 1 == 6) {
-            m1 = 0
-            m2 = 0
-            if (h2 + 1 == 4 && h1 == 2) {
-                h1 = 0
-                h2 = 0
-                m1 = 0
-                m2 = 0
-            } else if (h2 + 1 == 10) {
-                h1 = h1 + 1
-                h2 = 0
-            } else {
-                h2 = h2 + 1
+input.onButtonPressed(Button.AB, function () {
+    if (mode == 0) {
+        if (settingplace < 2) {
+            settingplace += 1
+        } else if (settingplace == 2) {
+            mode = 1
+            if (ampm == 0) {
+                timeanddate.setTime(h, m, 0, timeanddate.MornNight.AM)
+            } else if (ampm == 1) {
+                timeanddate.setTime(h, m, 0, timeanddate.MornNight.PM)
             }
-        } else {
-            m1 = m1 + 1
-            m2 = 0
+            basic.showString(timeanddate.time(timeanddate.TimeFormat.HMMAMPM))
         }
-    } else {
-        m2 = m2 + 1
     }
-}
+})
 input.onButtonPressed(Button.B, function () {
     if (mode == 0) {
-        if (settingplace < 3) {
-            settingplace = settingplace + 1
-        } else {
-            mode = 1
-            show(true)
+        if (settingplace == 0) {
+            h += -1
+        } else if (settingplace == 1) {
+            m += -1
+        } else if (settingplace == 2) {
+            ampm = 1
         }
     } else if (mode == 1) {
-        basic.showString("" + convertToText(input.temperature()) + "c")
-        degrees = input.compassHeading()
-        if (degrees < 45) {
-            basic.showArrow(ArrowNames.North)
-        } else if (degrees < 135) {
-            basic.showArrow(ArrowNames.East)
-        } else if (degrees < 225) {
-            basic.showArrow(ArrowNames.South)
-        } else if (degrees < 315) {
-            basic.showArrow(ArrowNames.West)
-        } else {
-            basic.showArrow(ArrowNames.North)
-        }
-        basic.pause(3000)
-        basic.clearScreen()
+        degrees = input.temperature()
+        basic.showString("" + degrees + "c")
     }
 })
-function setup () {
-    h1 = 0
-    h2 = 0
-    m1 = 0
-    m2 = 0
-    mode = 0
-    settingplace = 0
-}
-function show (force: boolean) {
-    basic.showString("" + convertToText(h1) + convertToText(h2) + ":" + convertToText(m1) + convertToText(m2))
-    basic.clearScreen()
-}
+buttonClicks.onButtonHeld(buttonClicks.AorB.A, function () {
+    if (mode == 1) {
+        if (ampm == 0) {
+            timeanddate.setTime(parseFloat(serial.readLine().substr(0, 1)), parseFloat(serial.readLine().substr(2, 3)), 0, timeanddate.MornNight.AM)
+        } else if (ampm == 1) {
+            timeanddate.setTime(parseFloat(serial.readLine().substr(0, 1)), parseFloat(serial.readLine().substr(2, 3)), 0, timeanddate.MornNight.PM)
+        }
+    }
+})
 let degrees = 0
-let m2 = 0
-let m1 = 0
-let h2 = 0
-let h1 = 0
+let ampm = 0
+let m = 0
+let h = 0
 let settingplace = 0
+let serial_out = 0
 let mode = 0
-setup()
+mode = 0
+serial_out = 0
 basic.forever(function () {
     if (mode == 0) {
         if (settingplace == 0) {
-            basic.showNumber(h1)
+            if (h < 0) {
+                h = 0
+            } else if (h > 12) {
+                h = 12
+            }
+            basic.showNumber(h)
         } else if (settingplace == 1) {
-            basic.showNumber(h2)
+            if (m < 0) {
+                m = 0
+            } else if (m > 59) {
+                m = 59
+            }
+            basic.showNumber(m)
         } else if (settingplace == 2) {
-            basic.showNumber(m1)
-        } else {
-            basic.showNumber(m2)
+            if (ampm == 0) {
+                basic.showString("am")
+            } else {
+                basic.showString("pm")
+            }
         }
     } else if (mode == 1) {
-        timer()
-    }
-    if (2 < h1) {
-        h1 = 0
-    }
-    if (2 == h1 && 3 < h2) {
-        h2 = 0
-    }
-    if (9 < h2) {
-        h2 = 0
-    }
-    if (5 < m1) {
-        m1 = 0
-    }
-    if (9 < m2) {
-        m2 = 0
+        if (serial_out == 1) {
+            serial.writeString(timeanddate.time(timeanddate.TimeFormat.HMMSSAMPM))
+        }
     }
 })
